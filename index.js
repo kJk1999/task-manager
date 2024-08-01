@@ -11,9 +11,11 @@ connectDB();
 // CORS configuration
 
 const corsOptions = {
-  origin: 'https://astounding-empanada-9b42dd.netlify.app', // Replace with the URL of your client app
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: '*',
   credentials: true,
+  methods: ['GET','POST','HEAD','PUT','PATCH','DELETE'],
+  allowedHeaders: ['Content-Type'],
+  exposedHeaders: ['Content-Type']
 };
 
 app.use(cors(corsOptions)); // Apply CORS middleware
