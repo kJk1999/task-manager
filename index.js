@@ -11,7 +11,7 @@ connectDB();
 // CORS configuration
 
 const corsOptions = {
-  origin: 'https://astounding-empanada-9b42dd.netlify.app/', // Replace with the URL of your client app
+  origin: 'https://astounding-empanada-9b42dd.netlify.app', // Replace with the URL of your client app
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 };
