@@ -35,7 +35,7 @@ exports.updateTodoItem = async (req, res) => {
       return res.status(404).json({ error: "Todo item not found" });
     }
     const totalTodos = await Todo.find();
-    req.status(200).json(totalTodos);
+    res.status(200).json(totalTodos);
   } catch (err) {
     res.status(500);
   }
