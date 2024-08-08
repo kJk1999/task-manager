@@ -60,10 +60,12 @@ exports.updateTodoItem = async (req, res) => {
 exports.deleteTodoItem = async (req, res) => {
   const id = req.params.id;
   const user = req.user
-  console.log(user)
+ 
   try {
     const todo = await Todo.findOne({_id:id})
-    console.log(todo)
+    console.log(todo,"todo")
+    console.log(user,"user")
+    
     if(todo.author === user._id){
       const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
     const remainingTodos = await Todo.find();
