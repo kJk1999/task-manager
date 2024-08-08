@@ -1,5 +1,8 @@
 const Todo = require("../models/todoModel");
 
+
+
+
 exports.getAllTodos = async (req, res) => {
   try {
     const todos = await Todo.find();
@@ -12,10 +15,11 @@ exports.getAllTodos = async (req, res) => {
 
 exports.createTodo = async (req, res) => {
   const todoData = req.body;
-  console.log(todoData);
-  // Get the JSON data from the request body
+  
+  const user = req.user
+  
   try {
-    const newTodo = new Todo(todoData);
+    const newTodo = new Todo({...todoData,author:user._id});
     await newTodo.save();
     res.status(201).json(newTodo); // Respond with the created Todo
   } catch (error) {
@@ -24,8 +28,13 @@ exports.createTodo = async (req, res) => {
 };
 
 exports.updateTodoItem = async (req, res) => {
+
+ 
   const id = req.params.id;
+  const user = req.user
   try {
+   const todo = await Todo.findOne({_id:id})
+   if(todo.author === user._id){
     const updatedTodo = await Todo.findByIdAndUpdate(
       id,
       { $set: req.body },
@@ -34,6 +43,13 @@ exports.updateTodoItem = async (req, res) => {
     if (!updatedTodo) {
       return res.status(404).json({ error: "Todo item not found" });
     }
+
+   }
+   else{
+     return res.status(404).json({status:"fail",message:"You can only modify your todos"})
+   }
+  //  if(todo.author )
+    
     const totalTodos = await Todo.find();
     res.status(200).json(totalTodos);
   } catch (err) {
@@ -42,13 +58,22 @@ exports.updateTodoItem = async (req, res) => {
 };
 
 exports.deleteTodoItem = async (req, res) => {
+  const id = req.params.id;
+  const user = req.user
+  console.log(user)
   try {
-    const todo = await Todo.findByIdAndDelete(req.params.id);
+    const todo = await Todo.findOne({_id:id})
+    console.log(todo)
+    if(todo.author === user._id){
+      const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
     const remainingTodos = await Todo.find();
-    if (!todo) {
-      res.status(400).send("Todo Item Not Found");
+    if (!deletedTodo) {
+      return res.status(400).send("Todo Item Not Found");
     }
     res.status(200).json(remainingTodos);
+
+    }
+    
   } catch (err) {
     res.status(500).send(err);
   }

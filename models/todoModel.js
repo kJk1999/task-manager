@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 
 // Define the schema for the Todo model
 const todoSchema = new mongoose.Schema({
+  author:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"User",
+    required:true,
+  },
   name: {
     type: String,
     required: true, // Title is required
