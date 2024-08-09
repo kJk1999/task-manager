@@ -28,34 +28,39 @@ exports.createTodo = async (req, res) => {
 };
 
 exports.updateTodoItem = async (req, res) => {
-
- 
   const id = req.params.id;
-  const user = req.user
+  const user = req.user;
+
   try {
-   const todo = await Todo.findOne({_id:id})
-   if(todo.author === user._id){
-    const updatedTodo = await Todo.findByIdAndUpdate(
-      id,
-      { $set: req.body },
-      { new: true }
-    );
-    if (!updatedTodo) {
+    const todo = await Todo.findOne({ _id: id });
+    
+    if (!todo) {
       return res.status(404).json({ error: "Todo item not found" });
     }
 
-   }
-   else{
-     return res.status(404).json({status:"fail",message:"You can only modify your todos"})
-   }
-  //  if(todo.author )
-    
-    const totalTodos = await Todo.find();
-    res.status(200).json(totalTodos);
+    if (todo.author.toString() === user._id.toString()) {
+      const updatedTodo = await Todo.findByIdAndUpdate(
+        id,
+        { $set: req.body },
+        { new: true }
+      );
+
+      if (!updatedTodo) {
+        return res.status(404).json({ error: "Failed to update Todo item" });
+      }
+
+      return res.status(200).json(updatedTodo);
+    } else {
+      return res.status(403).json({
+        status: "fail",
+        message: "You can only modify your todos"
+      });
+    }
   } catch (err) {
-    res.status(500);
+    res.status(500).json({ error: "Server error" });
   }
 };
+
 
 exports.deleteTodoItem = async (req, res) => {
   const id = req.params.id;
