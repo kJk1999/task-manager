@@ -59,23 +59,27 @@ exports.updateTodoItem = async (req, res) => {
 
 exports.deleteTodoItem = async (req, res) => {
   const id = req.params.id;
-  const user = req.user
- 
+  const user = req.user;
+
   try {
-    const todo = await Todo.findOne({_id:id})
-    console.log(todo,"todo")
-    console.log(user,"user")
+    const todo = await Todo.findOne({ _id: id });
     
-    if(todo.author === user._id){
-      const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
-    const remainingTodos = await Todo.find();
-    if (!deletedTodo) {
+    if (!todo) {
       return res.status(400).send("Todo Item Not Found");
     }
-    res.status(200).json(remainingTodos);
 
+    if (todo.author.toString() === user._id.toString()) {
+      const deletedTodo = await Todo.findByIdAndDelete(id);
+      
+      if (!deletedTodo) {
+        return res.status(400).send("Failed to delete Todo Item");
+      }
+
+      const remainingTodos = await Todo.find({ author: user._id });
+      return res.status(200).json(remainingTodos);
+    } else {
+      return res.status(403).send("Unauthorized to delete this Todo Item");
     }
-    
   } catch (err) {
     res.status(500).send(err);
   }
