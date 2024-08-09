@@ -48,8 +48,8 @@ exports.updateTodoItem = async (req, res) => {
       if (!updatedTodo) {
         return res.status(404).json({ error: "Failed to update Todo item" });
       }
-
-      return res.status(200).json(updatedTodo);
+      const allTodos = await Todo.find()
+      return res.status(200).json(allTodos);
     } else {
       return res.status(403).json({
         status: "fail",
