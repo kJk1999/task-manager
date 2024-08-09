@@ -80,7 +80,7 @@ exports.deleteTodoItem = async (req, res) => {
         return res.status(400).send("Failed to delete Todo Item");
       }
 
-      const remainingTodos = await Todo.find({ author: user._id });
+      const remainingTodos = await Todo.find();
       return res.status(200).json(remainingTodos);
     } else {
       return res.status(403).send("Unauthorized to delete this Todo Item");
